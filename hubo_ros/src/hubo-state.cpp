@@ -35,7 +35,6 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../../../hubo-ach/include/hubo.h"
 #include <sstream>
 
-
 // for ach
 #include <errno.h>
 #include <fcntl.h>
