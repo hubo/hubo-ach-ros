@@ -66,14 +66,14 @@ int main(int argc, char **argv)
   size_t fs;
 
   r = ach_get( &chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_LAST );
-    if(ACH_OK != r) {
-      if(hubo_debug) {
-        //printf("State ini r = %s\n",ach_result_to_string(r));}
-        printf("State ini r = %i\n",r);}
-      }
-      else{   
-        assert( sizeof(H_state) == fs );
-      }
+  if(ACH_OK != r) {
+    if(hubo_debug) {
+      //printf("State ini r = %s\n",ach_result_to_string(r));}
+      printf("State ini r = %i\n",r);}
+  }
+  else{   
+    assert( sizeof(H_state) == fs );
+  }
 
 
 
@@ -86,7 +86,13 @@ int main(int argc, char **argv)
 // %EndTag(NODEHANDLE)%
 
 // %Tag(PUBLISHER)%
-  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("state", 1000);
+  /* Number of iterations to save */
+  int numSave = 100; 
+  ros::Publisher pub_joint_pos = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/pos", numSave);
+  ros::Publisher pub_joint_cur = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/cur", numSave);
+  ros::Publisher pub_joint_vel = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/vel", numSave);
+  ros::Publisher pub_joint_active = n.advertise<std_msgs::bool[HUBO_JOINT_COUNT]>("/joint/active", numSave);
+  ros::Publisher pub_joint_zeroed = n.advertise<std_msgs::bool[HUBO_JOINT_COUNT]>("/joint/zeroed", numSave);
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
@@ -95,9 +101,42 @@ int main(int argc, char **argv)
 
 // %Tag(ROS_OK)%
   int count = 0;
+  double pos[HUBO_JOINT_COUNT];
+  double cur[HUBO_JOINT_COUNT];
+  double vel[HUBO_JOINT_COUNT];
+  bool active[HUBO_JOINT_COUNT];
+  bool zeroed[HUBO_JOINT_COUNT];
+  memset( &pos, 0, sizeof(pos));
+  memset( &cur, 0, sizeof(cur));
+  memset( &vel, 0, sizeof(vel));
+  memset( &active, 0, sizeof(active));
+  memset( &zeroed, 0, sizeof(zeroed));
   while (ros::ok())
   {
 // %EndTag(ROS_OK)%
+
+
+/* ach get */
+  r = ach_get( &chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_LAST );
+  if(ACH_OK != r) {
+    if(hubo_debug) {
+      //printf("State ini r = %s\n",ach_result_to_string(r));}
+      printf("State ini r = %i\n",r);}
+  }
+  else{   
+    assert( sizeof(H_state) == fs );
+  }
+
+/* Get States */
+  for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
+    pos[i] = H_state.joint[i].pos;
+    cur[i] = H_state.joint[i].cur;
+    vel[i] = H_state.joint[i].vel;
+    active[i] = (bool)H_state.joint[i].active;
+    zeroed[i] = (bool)H_state.joint[i].zeroed;
+  }
+
+
     /**
      * This is a message object. You stuff it with data, and then publish it.
      */
@@ -105,7 +144,7 @@ int main(int argc, char **argv)
     std_msgs::String msg;
 
     std::stringstream ss;
-    ss << "hello world " << count;
+    ss << H_state.joint[RSP].pos;
     msg.data = ss.str();
 // %EndTag(FILL_MESSAGE)%
 
@@ -120,7 +159,8 @@ int main(int argc, char **argv)
      * in the constructor above.
      */
 // %Tag(PUBLISH)%
-    chatter_pub.publish(msg);
+    //chatter_pub.publish(msg);
+    chatter_pub.publish(1);
 // %EndTag(PUBLISH)%
 
 // %Tag(SPINONCE)%
