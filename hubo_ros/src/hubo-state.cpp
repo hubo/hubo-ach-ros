@@ -31,6 +31,7 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // %EndTag(ROS_HEADER)%
 // %Tag(MSG_HEADER)%
 #include "std_msgs/String.h"
+#include "std_msgs/Float32MultiArray.h"
 // %EndTag(MSG_HEADER)%
 #include "../../../hubo-ach/include/hubo.h"
 #include <sstream>
@@ -87,11 +88,19 @@ int main(int argc, char **argv)
 // %Tag(PUBLISHER)%
   /* Number of iterations to save */
   int numSave = 100; 
-  ros::Publisher pub_joint_pos = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/pos", numSave);
+  /*ros::Publisher pub_joint_pos = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/pos", numSave);
   ros::Publisher pub_joint_cur = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/cur", numSave);
   ros::Publisher pub_joint_vel = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/vel", numSave);
   ros::Publisher pub_joint_active = n.advertise<std_msgs::bool[HUBO_JOINT_COUNT]>("/joint/active", numSave);
   ros::Publisher pub_joint_zeroed = n.advertise<std_msgs::bool[HUBO_JOINT_COUNT]>("/joint/zeroed", numSave);
+  */
+
+  ros::Publisher pub_joint_pos = n.advertise<std_msgs::Float32MultiArray>("joint/pos", numSave);
+  ros::Publisher pub_joint_cur = n.advertise<std_msgs::Float32MultiArray>("joint/cur", numSave);
+  ros::Publisher pub_joint_vel = n.advertise<std_msgs::Float32MultiArray>("joint/vel", numSave);
+  ros::Publisher pub_joint_active = n.advertise<std_msgs::Float32MultiArray>("joint/active", numSave);
+  ros::Publisher pub_joint_zeroed = n.advertise<std_msgs::Float32MultiArray>("joint/zeroed", numSave);
+// %EndTag(PUBLISHER)%
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
@@ -99,20 +108,18 @@ int main(int argc, char **argv)
 // %EndTag(LOOP_RATE)%
 
 // %Tag(ROS_OK)%
-  double pos[HUBO_JOINT_COUNT];
-  double cur[HUBO_JOINT_COUNT];
-  double vel[HUBO_JOINT_COUNT];
-  bool active[HUBO_JOINT_COUNT];
-  bool zeroed[HUBO_JOINT_COUNT];
-  memset( &pos, 0, sizeof(pos));
-  memset( &cur, 0, sizeof(cur));
-  memset( &vel, 0, sizeof(vel));
-  memset( &active, 0, sizeof(active));
-  memset( &zeroed, 0, sizeof(zeroed));
+
 
   while (ros::ok())
   {
 // %EndTag(ROS_OK)%
+
+std_msgs::Float32MultiArray pos;
+std_msgs::Float32MultiArray cur;
+std_msgs::Float32MultiArray vel;
+std_msgs::Float32MultiArray active;
+std_msgs::Float32MultiArray zeroed;
+
 
 
 /* ach get */
@@ -128,11 +135,11 @@ int main(int argc, char **argv)
 
 /* Get States */
   for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
-    pos[i] = H_state.joint[i].pos;
-    cur[i] = H_state.joint[i].cur;
-    vel[i] = H_state.joint[i].vel;
-    active[i] = (bool)H_state.joint[i].active;
-    zeroed[i] = (bool)H_state.joint[i].zeroed;
+    pos.data.push_back(H_state.joint[i].pos);
+    cur.data.push_back(H_state.joint[i].cur);
+    vel.data.push_back(H_state.joint[i].vel);
+    active.data.push_back(H_state.joint[i].active);
+    zeroed.data.push_back(H_state.joint[i].zeroed);
   }
 
 
