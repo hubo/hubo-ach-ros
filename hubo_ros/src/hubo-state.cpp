@@ -100,7 +100,6 @@ int main(int argc, char **argv)
 // %EndTag(LOOP_RATE)%
 
 // %Tag(ROS_OK)%
-  int count = 0;
   double pos[HUBO_JOINT_COUNT];
   double cur[HUBO_JOINT_COUNT];
   double vel[HUBO_JOINT_COUNT];
@@ -111,6 +110,7 @@ int main(int argc, char **argv)
   memset( &vel, 0, sizeof(vel));
   memset( &active, 0, sizeof(active));
   memset( &zeroed, 0, sizeof(zeroed));
+
   while (ros::ok())
   {
 // %EndTag(ROS_OK)%
@@ -137,30 +137,13 @@ int main(int argc, char **argv)
   }
 
 
-    /**
-     * This is a message object. You stuff it with data, and then publish it.
-     */
-// %Tag(FILL_MESSAGE)%
-    std_msgs::String msg;
-
-    std::stringstream ss;
-    ss << H_state.joint[RSP].pos;
-    msg.data = ss.str();
-// %EndTag(FILL_MESSAGE)%
-
-// %Tag(ROSCONSOLE)%
-    ROS_INFO("%s", msg.data.c_str());
-// %EndTag(ROSCONSOLE)%
-
-    /**
-     * The publish() function is how you send messages. The parameter
-     * is the message object. The type of this object must agree with the type
-     * given as a template parameter to the advertise<>() call, as was done
-     * in the constructor above.
-     */
 // %Tag(PUBLISH)%
-    //chatter_pub.publish(msg);
-    chatter_pub.publish(1);
+    pub_joint_pos.publish(pos);
+    pub_joint_cur.publish(cur);
+    pub_joint_vel.publish(vel);
+    pub_joint_active.publish(active);
+    pub_joint_zeroed.publish(zeroed);
+    //chatter_pub.publish(1);
 // %EndTag(PUBLISH)%
 
 // %Tag(SPINONCE)%
@@ -170,7 +153,6 @@ int main(int argc, char **argv)
 // %Tag(RATE_SLEEP)%
     loop_rate.sleep();
 // %EndTag(RATE_SLEEP)%
-    ++count;
   }
 
 
