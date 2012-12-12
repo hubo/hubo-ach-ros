@@ -58,8 +58,7 @@ int main(int argc, char **argv)
 {
 
   /* Ach Stuff */
-  //int r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME , NULL);
-  int r = ach_open(&chan_hubo_state, "hubo" , NULL);
+  int r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME , NULL);
   assert( ACH_OK == r );
 
   struct hubo_state H_state;
