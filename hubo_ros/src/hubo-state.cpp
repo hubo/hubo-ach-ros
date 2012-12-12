@@ -1,28 +1,28 @@
 /*
-Copyright (c) 2012, Daniel M. Lofaro
-All rights reserved.
+  Copyright (c) 2012, Daniel M. Lofaro
+  All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the author nor the names of its contributors may 
-      be used to endorse or promote products derived from this software 
-      without specific prior written permission.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  * Redistributions of source code must retain the above copyright
+  notice, this list of conditions and the following disclaimer.
+  * Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the
+  documentation and/or other materials provided with the distribution.
+  * Neither the name of the author nor the names of its contributors may 
+  be used to endorse or promote products derived from this software 
+  without specific prior written permission.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, 
-INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, 
+  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
+  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 // %Tag(FULLTEXT)%
@@ -31,10 +31,11 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // %EndTag(ROS_HEADER)%
 // %Tag(MSG_HEADER)%
 #include "std_msgs/String.h"
+#include "std_msgs/Float64MultiArray.h"
 // %EndTag(MSG_HEADER)%
-#include "../../../hubo-ach/include/hubo.h"
+#include "hubo_ros/hubo.h"
 #include <sstream>
-
+#include <vector>
 
 // for ach
 #include <errno.h>
@@ -56,7 +57,7 @@ int hubo_debug = 0;
 int main(int argc, char **argv)
 {
 
-/* Ach Stuff */
+  /* Ach Stuff */
   int r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME , NULL);
   assert( ACH_OK == r );
 
@@ -77,83 +78,97 @@ int main(int argc, char **argv)
 
 
 
-// %Tag(INIT)%
+  // %Tag(INIT)%
   ros::init(argc, argv, "hubo-state");
-// %EndTag(INIT)%
+  // %EndTag(INIT)%
 
-// %Tag(NODEHANDLE)%
+  // %Tag(NODEHANDLE)%
   ros::NodeHandle n;
-// %EndTag(NODEHANDLE)%
+  // %EndTag(NODEHANDLE)%
 
-// %Tag(PUBLISHER)%
+  // %Tag(PUBLISHER)%
   /* Number of iterations to save */
   int numSave = 100; 
-  ros::Publisher pub_joint_pos = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/pos", numSave);
-  ros::Publisher pub_joint_cur = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/cur", numSave);
-  ros::Publisher pub_joint_vel = n.advertise<std_msgs::double[HUBO_JOINT_COUNT]>("/joint/vel", numSave);
-  ros::Publisher pub_joint_active = n.advertise<std_msgs::bool[HUBO_JOINT_COUNT]>("/joint/active", numSave);
-  ros::Publisher pub_joint_zeroed = n.advertise<std_msgs::bool[HUBO_JOINT_COUNT]>("/joint/zeroed", numSave);
-// %EndTag(PUBLISHER)%
 
-// %Tag(LOOP_RATE)%
+  // Note that Float64MultiArray is the ROS equivalent of a double array
+  // Note that ByteMultiArray is the ROS equivalent of a bool array
+  ros::Publisher pub_joint_pos = n.advertise<std_msgs::Float64MultiArray>("/joint/pos", numSave);
+  ros::Publisher pub_joint_cur = n.advertise<std_msgs::Float64MultiArray>("/joint/cur", numSave);
+  ros::Publisher pub_joint_vel = n.advertise<std_msgs::Float64MultiArray>("/joint/vel", numSave);
+  ros::Publisher pub_joint_active = n.advertise<std_msgs::Float64MultiArray>("/joint/active", numSave);
+  ros::Publisher pub_joint_zeroed = n.advertise<std_msgs::Float64MultiArray>("/joint/zeroed", numSave);
+  // %EndTag(PUBLISHER)%
+
+  // %Tag(LOOP_RATE)%
   ros::Rate loop_rate(10);
-// %EndTag(LOOP_RATE)%
+  // %EndTag(LOOP_RATE)%
 
-// %Tag(ROS_OK)%
-  double pos[HUBO_JOINT_COUNT];
-  double cur[HUBO_JOINT_COUNT];
-  double vel[HUBO_JOINT_COUNT];
-  bool active[HUBO_JOINT_COUNT];
-  bool zeroed[HUBO_JOINT_COUNT];
-  memset( &pos, 0, sizeof(pos));
-  memset( &cur, 0, sizeof(cur));
-  memset( &vel, 0, sizeof(vel));
-  memset( &active, 0, sizeof(active));
-  memset( &zeroed, 0, sizeof(zeroed));
+  // %Tag(ROS_OK)%
+  
+  // Create vectors and initialize them as zero. Note that assigning data to ros message is automagically done when we use a vector of doubles instead of an array of doubles.
+  std::vector<double> pos(HUBO_JOINT_COUNT,0); 
+  std::vector<double> cur(HUBO_JOINT_COUNT,0); 
+  std::vector<double> vel(HUBO_JOINT_COUNT,0); 
+  std::vector<double> active(HUBO_JOINT_COUNT,0); 
+  std::vector<double> zeroed(HUBO_JOINT_COUNT,0); 
+
 
   while (ros::ok())
-  {
-// %EndTag(ROS_OK)%
+    {
+      // %EndTag(ROS_OK)%
 
 
-/* ach get */
-  r = ach_get( &chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_LAST );
-  if(ACH_OK != r) {
-    if(hubo_debug) {
-      //printf("State ini r = %s\n",ach_result_to_string(r));}
-      printf("State ini r = %i\n",r);}
-  }
-  else{   
-    assert( sizeof(H_state) == fs );
-  }
+      /* ach get */
+      r = ach_get( &chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_LAST );
+      if(ACH_OK != r) {
+	if(hubo_debug) {
+	  //printf("State ini r = %s\n",ach_result_to_string(r));}
+	  printf("State ini r = %i\n",r);}
+      }
+      else{   
+	assert( sizeof(H_state) == fs );
+      }
 
-/* Get States */
-  for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
-    pos[i] = H_state.joint[i].pos;
-    cur[i] = H_state.joint[i].cur;
-    vel[i] = H_state.joint[i].vel;
-    active[i] = (bool)H_state.joint[i].active;
-    zeroed[i] = (bool)H_state.joint[i].zeroed;
-  }
+      /* Get States */
+      for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
+	pos[i] = H_state.joint[i].pos;
+	cur[i] = H_state.joint[i].cur;
+	vel[i] = H_state.joint[i].vel;
+	active[i] = H_state.joint[i].active;
+	zeroed[i] = H_state.joint[i].zeroed;
+      }
 
 
-// %Tag(PUBLISH)%
-    pub_joint_pos.publish(pos);
-    pub_joint_cur.publish(cur);
-    pub_joint_vel.publish(vel);
-    pub_joint_active.publish(active);
-    pub_joint_zeroed.publish(zeroed);
-    //chatter_pub.publish(1);
-// %EndTag(PUBLISH)%
+      // %Tag(PUBLISH)%
+      // Note that you have to assign the data to your message first
+      std_msgs::Float64MultiArray my_msg;
 
-// %Tag(SPINONCE)%
-    ros::spinOnce();
-// %EndTag(SPINONCE)%
+      my_msg.data = pos;
+      pub_joint_pos.publish(my_msg);
+      
+      my_msg.data = cur;
+      pub_joint_cur.publish(my_msg);
 
-// %Tag(RATE_SLEEP)%
-    loop_rate.sleep();
-// %EndTag(RATE_SLEEP)%
-  }
+      my_msg.data = vel;
+      pub_joint_vel.publish(my_msg);
+
+      my_msg.data = active;
+      pub_joint_active.publish(my_msg);
+
+      my_msg.data = zeroed;
+      pub_joint_zeroed.publish(my_msg);
+
+      //chatter_pub.publish(1);
+      // %EndTag(PUBLISH)%
+
+      // %Tag(SPINONCE)%
+      ros::spinOnce();
+      // %EndTag(SPINONCE)%
+
+      // %Tag(RATE_SLEEP)%
+      loop_rate.sleep();
+      // %EndTag(RATE_SLEEP)%
+    }
 
 
   return 0;
