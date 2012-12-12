@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
 
   // %Tag(INIT)%
-  ros::init(argc, argv, "hubo-state");
+  ros::init(argc, argv, "hubo_state");
   // %EndTag(INIT)%
 
   // %Tag(NODEHANDLE)%
