@@ -1,4 +1,9 @@
-Requires:
+Usage: 
+
+hubo_ref:
+  Sets all of the 
+
+Dependencies:
 $ sudo apt-get install x-window-system
 $ sudo apt-get install libcanberra-gtk-module
 
