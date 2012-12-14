@@ -29,31 +29,52 @@
 // %Tag(FULLTEXT)%
 #include "ros/ros.h"
 #include "std_msgs/String.h"
+#include "../../../hubo-ach/include/hubo.h"
+#include "std_msgs/Float32MultiArray.h"
 
-/**
- * This tutorial demonstrates simple receipt of messages over the ROS system.
- */
+
+// for ach
+#include <errno.h>
+#include <fcntl.h>
+#include <assert.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <math.h>
+#include <inttypes.h>
+#include "ach.h"
+
+//#include "../include/hubo_ref_filter.h"
+#include "../../../hubo-ach/include/hubo-ref-filter.h"
+
+
+
+
+ach_channel_t chan_hubo_ref_filter;      // hubo-ach-filter
+
 // %Tag(CALLBACK)%
-void chatterCallback(const std_msgs::String::ConstPtr& msg)
+void chatterCallback(const std_msgs::Float32MultiArray s)
 {
-  ROS_INFO("I heard: [%s]", msg->data.c_str());
+//  ROS_INFO("I heard: [%s]", msg->data.c_str());
+struct hubo_ref H_ref_filter;
+memset( &H_ref_filter,   0, sizeof(H_ref_filter));
+for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
+	H_ref_filter.ref[i] = s.data[i];
+}
+
+
+ach_put( &chan_hubo_ref_filter, &H_ref_filter, sizeof(H_ref_filter));
 }
 // %EndTag(CALLBACK)%
 
 int main(int argc, char **argv)
 {
-  /**
-   * The ros::init() function needs to see argc and argv so that it can
-   * perform any ROS arguments and name remapping that were provided
-   * at the command line. For programmatic remappings you can use a
-   * different version of init() which takes remappings directly, but
-   * for most command-line programs, passing argc and argv is the easiest
-   * way to do it.  The third argument to init() is the name of the node.
-   *
-   * You must call one of the versions of ros::init() before using any other
-   * part of the ROS system.
-   */
-  ros::init(argc, argv, "listener");
+  /* open ach-filter channel */
+  int r = ach_open(&chan_hubo_ref_filter, HUBO_CHAN_REF_FILTER_NAME , NULL);
+  assert( ACH_OK == r );
+
+  ros::init(argc, argv, "hubo_ref");
 
   /**
    * NodeHandle is the main access point to communications with the
@@ -78,7 +99,8 @@ int main(int argc, char **argv)
    * buffered up before beginning to throw away the oldest ones.
    */
 // %Tag(SUBSCRIBER)%
-  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+  ros::Subscriber sub = n.subscribe("/hubo/ref", 1000, chatterCallback);
+
 // %EndTag(SUBSCRIBER)%
 
   /**

@@ -36,50 +36,14 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "../../../hubo-ach/include/hubo.h"
 #include <sstream>
 
-// for ach
-#include <errno.h>
-#include <fcntl.h>
-#include <assert.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <ctype.h>
-#include <stdbool.h>
-#include <math.h>
-#include <inttypes.h>
-#include "ach.h"
-#include <string.h>
-#include <stdio.h>
-
-
-ach_channel_t chan_hubo_state;    // hubo-ach-state
+double tmp = 0.0;
 int hubo_debug = 0;
 int main(int argc, char **argv)
 {
 
-/* Ach Stuff */
-  // open hubo state
-  int r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME, NULL);
-  assert( ACH_OK == r );
-
-  struct hubo_state H_state;
-  memset( &H_state, 0, sizeof(H_state));
-
-  size_t fs;
-
-  r = ach_get( &chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_LAST );
-  if(ACH_OK != r) {
-    if(hubo_debug) {
-      //printf("State ini r = %s\n",ach_result_to_string(r));}
-      printf("State ini r = %i\n",r);}
-  }
-  else{   
-    assert( sizeof(H_state) == fs );
-  }
-
-
 
 // %Tag(INIT)%
-  ros::init(argc, argv, "hubo_state");
+  ros::init(argc, argv, "hubo_test");
 // %EndTag(INIT)%
 
 // %Tag(NODEHANDLE)%
@@ -93,7 +57,7 @@ int main(int argc, char **argv)
 
 //  ros::Publisher pub_state = n.advertise<hubo_state>("state", numSave);
 
-  ros::Publisher pub_joint_pos = n.advertise<std_msgs::Float32MultiArray>("/hubo_state/pos", numSave);
+  ros::Publisher pub_joint_pos = n.advertise<std_msgs::Float32MultiArray>("/hubo/ref", numSave);
 //  ros::Publisher pub_joint_cur = n.advertise<std_msgs::Float32MultiArray>("/joint/cur", numSave);
 //  ros::Publisher pub_joint_vel = n.advertise<std_msgs::Float32MultiArray>("/joint/vel", numSave);
 //  ros::Publisher pub_joint_active = n.advertise<std_msgs::Float32MultiArray>("/joint/active", numSave);
@@ -102,7 +66,7 @@ int main(int argc, char **argv)
 // %EndTag(PUBLISHER)%
 
 // %Tag(LOOP_RATE)%
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(1);
 // %EndTag(LOOP_RATE)%
 
 // %Tag(ROS_OK)%
@@ -113,20 +77,13 @@ int main(int argc, char **argv)
 
 std_msgs::Float32MultiArray pos;
 /* ach get */
-  r = ach_get( &chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_LAST );
-  if(ACH_OK != r) {
-    if(hubo_debug) {
-      //printf("State ini r = %s\n",ach_result_to_string(r));}
-      printf("State ini r = %i\n",r);}
-  }
-  else{   
-    assert( sizeof(H_state) == fs );
-  }
 
-
+if(tmp < 1.0) tmp = 2.0;
+else tmp = 0;
 
 for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
-    pos.data.push_back(H_state.joint[i].pos);
+  if( i == 0 ) pos.data.push_back(tmp);
+  pos.data.push_back(0.0);
 }
 
 
