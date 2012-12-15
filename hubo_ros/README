@@ -14,3 +14,5 @@ Dependencies:
 $ sudo apt-get install x-window-system
 $ sudo apt-get install libcanberra-gtk-module
 
+Required Controllers:
+  hubo-ref-filter 
