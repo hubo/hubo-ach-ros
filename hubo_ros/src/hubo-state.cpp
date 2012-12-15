@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 //  ros::Publisher pub_state = n.advertise<hubo_state>("state", numSave);
 
-  ros::Publisher pub_joint_pos = n.advertise<std_msgs::Float32MultiArray>("/hubo_state/pos", numSave);
+  ros::Publisher pub_joint_pos = n.advertise<std_msgs::Float32MultiArray>("/hubo/state/pos", numSave);
 //  ros::Publisher pub_joint_cur = n.advertise<std_msgs::Float32MultiArray>("/joint/cur", numSave);
 //  ros::Publisher pub_joint_vel = n.advertise<std_msgs::Float32MultiArray>("/joint/vel", numSave);
 //  ros::Publisher pub_joint_active = n.advertise<std_msgs::Float32MultiArray>("/joint/active", numSave);

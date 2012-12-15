@@ -56,11 +56,11 @@ ach_channel_t chan_hubo_ref_filter;      // hubo-ach-filter
 // %Tag(CALLBACK)%
 void chatterCallback(const std_msgs::Float32MultiArray s)
 {
-//  ROS_INFO("I heard: [%s]", msg->data.c_str());
-struct hubo_ref H_ref_filter;
-memset( &H_ref_filter,   0, sizeof(H_ref_filter));
-for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
-	H_ref_filter.ref[i] = s.data[i];
+	//  ROS_INFO("I heard: [%s]", msg->data.c_str());
+	struct hubo_ref H_ref_filter;
+	memset( &H_ref_filter,   0, sizeof(H_ref_filter));
+	for( int i = 0; i < HUBO_JOINT_COUNT; i++) {
+		H_ref_filter.ref[i] = s.data[i];
 }
 
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
    * buffered up before beginning to throw away the oldest ones.
    */
 // %Tag(SUBSCRIBER)%
-  ros::Subscriber sub = n.subscribe("/hubo/ref", 1000, chatterCallback);
+  ros::Subscriber sub = n.subscribe("/hubo/ref/pos", 1000, chatterCallback);
 
 // %EndTag(SUBSCRIBER)%
 

@@ -1,7 +1,14 @@
 Usage: 
 
 hubo_ref:
-  Sets all of the 
+  Channel Name: hubo_ref
+  Node: /hubo/ref/pos
+  Node take float64[NUM_OF_JOINTS] where each index is defined in hubo.h.  Each value is the desired motor position in rad.
+
+hubo_state:
+  Channel Name: hubo_state
+  Node: /hubo/state/pos
+  Node type float64[NUM_OF_JOINTS] where each index is defined in hubo.h.  Each vlaue is the motor position as read from the encoder in rad.
 
 Dependencies:
 $ sudo apt-get install x-window-system
