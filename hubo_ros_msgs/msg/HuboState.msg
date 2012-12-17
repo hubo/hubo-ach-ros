@@ -1,4 +1,6 @@
 HuboJointState[] joints
+HuboHand left_hand
+HuboHand right_hand
 HuboIMU imu
 HuboIMU left_foot
 HuboIMU right_foot

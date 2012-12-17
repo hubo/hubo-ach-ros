@@ -31,11 +31,6 @@
     :reader y_rotation
     :initarg :y_rotation
     :type cl:float
-    :initform 0.0)
-   (z_rotation
-    :reader z_rotation
-    :initarg :z_rotation
-    :type cl:float
     :initform 0.0))
 )
 
@@ -71,11 +66,6 @@
 (cl:defmethod y_rotation-val ((m <HuboIMU>))
   (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader hubo_ros_msgs-msg:y_rotation-val is deprecated.  Use hubo_ros_msgs-msg:y_rotation instead.")
   (y_rotation m))
-
-(cl:ensure-generic-function 'z_rotation-val :lambda-list '(m))
-(cl:defmethod z_rotation-val ((m <HuboIMU>))
-  (roslisp-msg-protocol:msg-deprecation-warning "Using old-style slot reader hubo_ros_msgs-msg:z_rotation-val is deprecated.  Use hubo_ros_msgs-msg:z_rotation instead.")
-  (z_rotation m))
 (cl:defmethod roslisp-msg-protocol:serialize ((msg <HuboIMU>) ostream)
   "Serializes a message object of type '<HuboIMU>"
   (cl:let ((bits (roslisp-utils:encode-double-float-bits (cl:slot-value msg 'x_acceleration))))
@@ -115,15 +105,6 @@
     (cl:write-byte (cl:ldb (cl:byte 8 48) bits) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 56) bits) ostream))
   (cl:let ((bits (roslisp-utils:encode-double-float-bits (cl:slot-value msg 'y_rotation))))
-    (cl:write-byte (cl:ldb (cl:byte 8 0) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 8) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 16) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 24) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 32) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 40) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 48) bits) ostream)
-    (cl:write-byte (cl:ldb (cl:byte 8 56) bits) ostream))
-  (cl:let ((bits (roslisp-utils:encode-double-float-bits (cl:slot-value msg 'z_rotation))))
     (cl:write-byte (cl:ldb (cl:byte 8 0) bits) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 8) bits) ostream)
     (cl:write-byte (cl:ldb (cl:byte 8 16) bits) ostream)
@@ -185,16 +166,6 @@
       (cl:setf (cl:ldb (cl:byte 8 48) bits) (cl:read-byte istream))
       (cl:setf (cl:ldb (cl:byte 8 56) bits) (cl:read-byte istream))
     (cl:setf (cl:slot-value msg 'y_rotation) (roslisp-utils:decode-double-float-bits bits)))
-    (cl:let ((bits 0))
-      (cl:setf (cl:ldb (cl:byte 8 0) bits) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 8) bits) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 16) bits) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 24) bits) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 32) bits) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 40) bits) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 48) bits) (cl:read-byte istream))
-      (cl:setf (cl:ldb (cl:byte 8 56) bits) (cl:read-byte istream))
-    (cl:setf (cl:slot-value msg 'z_rotation) (roslisp-utils:decode-double-float-bits bits)))
   msg
 )
 (cl:defmethod roslisp-msg-protocol:ros-datatype ((msg (cl:eql '<HuboIMU>)))
@@ -205,19 +176,18 @@
   "hubo_ros_msgs/HuboIMU")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql '<HuboIMU>)))
   "Returns md5sum for a message object of type '<HuboIMU>"
-  "925b3f405942a88b584489a98554dcd8")
+  "9c14264f3bcdc765b4eeefc475d9111c")
 (cl:defmethod roslisp-msg-protocol:md5sum ((type (cl:eql 'HuboIMU)))
   "Returns md5sum for a message object of type 'HuboIMU"
-  "925b3f405942a88b584489a98554dcd8")
+  "9c14264f3bcdc765b4eeefc475d9111c")
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql '<HuboIMU>)))
   "Returns full string definition for message of type '<HuboIMU>"
-  (cl:format cl:nil "float64 x_acceleration~%float64 y_acceleration~%float64 z_acceleration~%float64 x_rotation~%float64 y_rotation~%float64 z_rotation~%~%~%"))
+  (cl:format cl:nil "float64 x_acceleration~%float64 y_acceleration~%float64 z_acceleration~%float64 x_rotation~%float64 y_rotation~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:message-definition ((type (cl:eql 'HuboIMU)))
   "Returns full string definition for message of type 'HuboIMU"
-  (cl:format cl:nil "float64 x_acceleration~%float64 y_acceleration~%float64 z_acceleration~%float64 x_rotation~%float64 y_rotation~%float64 z_rotation~%~%~%"))
+  (cl:format cl:nil "float64 x_acceleration~%float64 y_acceleration~%float64 z_acceleration~%float64 x_rotation~%float64 y_rotation~%~%~%"))
 (cl:defmethod roslisp-msg-protocol:serialization-length ((msg <HuboIMU>))
   (cl:+ 0
-     8
      8
      8
      8
@@ -232,5 +202,4 @@
     (cl:cons ':z_acceleration (z_acceleration msg))
     (cl:cons ':x_rotation (x_rotation msg))
     (cl:cons ':y_rotation (y_rotation msg))
-    (cl:cons ':z_rotation (z_rotation msg))
 ))

@@ -1,6 +1,10 @@
 (cl:in-package hubo_ros_msgs-msg)
 (cl:export '(JOINTS-VAL
           JOINTS
+          LEFT_HAND-VAL
+          LEFT_HAND
+          RIGHT_HAND-VAL
+          RIGHT_HAND
           IMU-VAL
           IMU
           LEFT_FOOT-VAL

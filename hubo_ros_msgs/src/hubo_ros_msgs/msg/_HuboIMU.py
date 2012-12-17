@@ -6,7 +6,7 @@ import struct
 
 
 class HuboIMU(genpy.Message):
-  _md5sum = "925b3f405942a88b584489a98554dcd8"
+  _md5sum = "9c14264f3bcdc765b4eeefc475d9111c"
   _type = "hubo_ros_msgs/HuboIMU"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """float64 x_acceleration
@@ -14,11 +14,10 @@ float64 y_acceleration
 float64 z_acceleration
 float64 x_rotation
 float64 y_rotation
-float64 z_rotation
 
 """
-  __slots__ = ['x_acceleration','y_acceleration','z_acceleration','x_rotation','y_rotation','z_rotation']
-  _slot_types = ['float64','float64','float64','float64','float64','float64']
+  __slots__ = ['x_acceleration','y_acceleration','z_acceleration','x_rotation','y_rotation']
+  _slot_types = ['float64','float64','float64','float64','float64']
 
   def __init__(self, *args, **kwds):
     """
@@ -28,7 +27,7 @@ float64 z_rotation
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       x_acceleration,y_acceleration,z_acceleration,x_rotation,y_rotation,z_rotation
+       x_acceleration,y_acceleration,z_acceleration,x_rotation,y_rotation
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -47,15 +46,12 @@ float64 z_rotation
         self.x_rotation = 0.
       if self.y_rotation is None:
         self.y_rotation = 0.
-      if self.z_rotation is None:
-        self.z_rotation = 0.
     else:
       self.x_acceleration = 0.
       self.y_acceleration = 0.
       self.z_acceleration = 0.
       self.x_rotation = 0.
       self.y_rotation = 0.
-      self.z_rotation = 0.
 
   def _get_types(self):
     """
@@ -70,7 +66,7 @@ float64 z_rotation
     """
     try:
       _x = self
-      buff.write(_struct_6d.pack(_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation, _x.z_rotation))
+      buff.write(_struct_5d.pack(_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -83,8 +79,8 @@ float64 z_rotation
       end = 0
       _x = self
       start = end
-      end += 48
-      (_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation, _x.z_rotation,) = _struct_6d.unpack(str[start:end])
+      end += 40
+      (_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation,) = _struct_5d.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -98,7 +94,7 @@ float64 z_rotation
     """
     try:
       _x = self
-      buff.write(_struct_6d.pack(_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation, _x.z_rotation))
+      buff.write(_struct_5d.pack(_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -112,11 +108,11 @@ float64 z_rotation
       end = 0
       _x = self
       start = end
-      end += 48
-      (_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation, _x.z_rotation,) = _struct_6d.unpack(str[start:end])
+      end += 40
+      (_x.x_acceleration, _x.y_acceleration, _x.z_acceleration, _x.x_rotation, _x.y_rotation,) = _struct_5d.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = genpy.struct_I
-_struct_6d = struct.Struct("<6d")
+_struct_5d = struct.Struct("<5d")

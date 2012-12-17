@@ -1,0 +1,47 @@
+HUBO-ACH to ROS bridge:
+----------
+1) hubo-ach to ROS:
+
+    Executable "hubo_ach2ros" connects to the ACH feedback channel on the Hubo and publishes "HuboState" messages on ROS topic "Hubo/HuboState".
+    
+    *This should be run on the actual Hubo robot or using a suitable simulator. Use otherwise at your own risk.*
+
+    For reference, this node requires approximately 8% CPU and 0.5% RAM on the upgraded (dual-core Atom, 1GB DDR3) Hubo control computer.
+-----
+    To use this node:
+
+    1) ROS must be running, preferably on your Hubo - if it is not, use "roscore" to launch ROS.
+
+    2) Set the ROS_HOSTNAME environment variable to the IP address or DNS name of the Hubo's computer.
+
+    3) Run the ACH to ROS node: "rosrun hubo_ros hubo_ach2ros"
+
+----------
+2) ROS to hubo-ach:
+
+    Executable "hubo_ros2ach" subscribes to ROS "HuboTrajectory" messages on the "Hubo/HuboCommand" topic and sends those commands over ACH to the controllers for the robot.
+
+    NOTE: this uses the HUBO_CHAN_REF_FILTER_NAME - using other ACH channels risks damage to your robot!
+
+    *This should be run on the actual Hubo robot or using a suitable simulator. Use otherwise at your own risk.*
+
+    For reference, this node requires approximately XX% CPU and Y.Y% RAM on the upgraded (dual-core Atom, 1GB DDR3) Hubo control computer.
+-----
+    To use this node:
+
+    1) ROS must be running, preferably on your Hubo - if it is not, use "roscore" to launch ROS.
+
+    2) Set the ROS_HOSTNAME environment variable to the IP address or DNS name of the Hubo's computer.
+
+    3) Run the ACH to ROS node: "rosrun hubo_ros hubo_ros2ach"
+
+--------------------
+General ROS notes:
+
+    1) Every computer must know its "name", either via IP address or DNS name. This is set via the ROS_HOSTNAME environment variable.
+        Example = "export ROS_HOSTNAME=192.168.1.1"
+
+    2) Every computer must know the name of the "master" node, either via IP address or DNS name. This is set via the ROS_MASTER_URI environment variable.
+        Example = "export ROS_MASTER_URI=http://192.168.1.1:11311/"
+
+    3) If you need multiple non-master computers to talk to each other, you may find it useful to updates the hosts file on each computer so that they can refer to each other by name.

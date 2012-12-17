@@ -72,22 +72,19 @@ bool ACHtoHuboState(struct hubo_state * robot_state, hubo_ros_msgs::HuboState * 
         msg->imu.y_acceleration = robot_state->imu[0].a_y;
         msg->imu.z_acceleration = robot_state->imu[0].a_z;
         msg->imu.x_rotation = robot_state->imu[0].w_x;
-        msg->imu.x_rotation = robot_state->imu[0].w_y;
-        msg->imu.x_rotation = robot_state->imu[0].w_z;
+        msg->imu.y_rotation = robot_state->imu[0].w_y;
         //IMU "2" the left foot IMU
         msg->left_foot.x_acceleration = robot_state->imu[1].a_x;
         msg->left_foot.y_acceleration = robot_state->imu[1].a_y;
         msg->left_foot.z_acceleration = robot_state->imu[1].a_z;
         msg->left_foot.x_rotation = robot_state->imu[1].w_x;
-        msg->left_foot.x_rotation = robot_state->imu[1].w_y;
-        msg->left_foot.x_rotation = robot_state->imu[1].w_z;
+        msg->left_foot.y_rotation = robot_state->imu[1].w_y;
         //IMU "3" the right foot IMU
         msg->right_foot.x_acceleration = robot_state->imu[2].a_x;
         msg->right_foot.y_acceleration = robot_state->imu[2].a_y;
         msg->right_foot.z_acceleration = robot_state->imu[2].a_z;
         msg->right_foot.x_rotation = robot_state->imu[2].w_x;
-        msg->right_foot.x_rotation = robot_state->imu[2].w_y;
-        msg->right_foot.x_rotation = robot_state->imu[2].w_z;
+        msg->right_foot.y_rotation = robot_state->imu[2].w_y;
         //Now, copy the four force-torque sensors
         //F-T "1" the left wrist
         msg->left_wrist.Mx = robot_state->ft[0].m_x;
@@ -118,6 +115,7 @@ bool ACHtoHuboState(struct hubo_state * robot_state, hubo_ros_msgs::HuboState * 
 //NEW MAIN LOOP
 int main(int argc, char **argv)
 {
+    printf("Initializing ACH-to-ROS bridge\n");
     //initialize ACH channel
     int r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME , NULL);
     assert( ACH_OK == r );
@@ -139,19 +137,20 @@ int main(int argc, char **argv)
     {
         assert(sizeof(H_state) == fs);
     }
+    printf("ACH channels loaded\n");
     //initialize ROS node
     ros::init(argc, argv, "hubo_from_ach");
     ros::NodeHandle nh;
 
     //construct ROS RT publisher
-    ros::Publisher hubo_state_pub = nh.advertise<hubo_ros_msgs::HuboState>("Hubo/HuboState", 0);
+    ros::Publisher hubo_state_pub = nh.advertise<hubo_ros_msgs::HuboState>("Hubo/HuboState", 1);
+    printf("ROS publisher loaded\n");
     //Loop
-    bool running = true;
-    while (running)
+    while (ros::ok())
     {
         //Get latest state from ACH
         // CODE HERE
-        r = ach_get(&chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_LAST);
+        r = ach_get(&chan_hubo_state, &H_state, sizeof(H_state), &fs, NULL, ACH_O_WAIT);
         if(ACH_OK != r)
         {
             if(hubo_debug)
@@ -165,6 +164,7 @@ int main(int argc, char **argv)
         }
         //Assemble new HuboState message
         hubo_ros_msgs::HuboState msg = hubo_ros_msgs::HuboState();
+        msg.joints.resize(HUBO_JOINT_COUNT);
         if(ACHtoHuboState(&H_state, &msg))
         {
             //Publish HuboState
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
         {
             printf("*** Invalid state recieved from HUBO! ***\n");
         }
-        // Do we SPIN/SLEEP/whatever to wait for ACH to provide new data? Or do we just loop as fast as possible?
+        ros::spinOnce();
     }
     //Satisfy the compiler
     return 0;

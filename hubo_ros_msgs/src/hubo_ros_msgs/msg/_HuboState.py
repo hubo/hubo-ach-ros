@@ -7,10 +7,12 @@ import struct
 import hubo_ros_msgs.msg
 
 class HuboState(genpy.Message):
-  _md5sum = "4fcc49221fa083e1c5207aa30b4f35d7"
+  _md5sum = "5245526d8ea9b726511504ca60eb9de2"
   _type = "hubo_ros_msgs/HuboState"
   _has_header = False #flag to mark the presence of a Header object
   _full_text = """HuboJointState[] joints
+HuboHand left_hand
+HuboHand right_hand
 HuboIMU imu
 HuboIMU left_foot
 HuboIMU right_foot
@@ -30,13 +32,20 @@ int32 active
 int32 zeroed
 
 ================================================================================
+MSG: hubo_ros_msgs/HuboHand
+float64 thumb
+float64 index
+float64 middle
+float64 ring
+float64 pinky
+
+================================================================================
 MSG: hubo_ros_msgs/HuboIMU
 float64 x_acceleration
 float64 y_acceleration
 float64 z_acceleration
 float64 x_rotation
 float64 y_rotation
-float64 z_rotation
 
 ================================================================================
 MSG: hubo_ros_msgs/HuboFT
@@ -45,8 +54,8 @@ float64 My
 float64 Fz
 
 """
-  __slots__ = ['joints','imu','left_foot','right_foot','left_wrist','right_wrist','left_ankle','right_ankle']
-  _slot_types = ['hubo_ros_msgs/HuboJointState[]','hubo_ros_msgs/HuboIMU','hubo_ros_msgs/HuboIMU','hubo_ros_msgs/HuboIMU','hubo_ros_msgs/HuboFT','hubo_ros_msgs/HuboFT','hubo_ros_msgs/HuboFT','hubo_ros_msgs/HuboFT']
+  __slots__ = ['joints','left_hand','right_hand','imu','left_foot','right_foot','left_wrist','right_wrist','left_ankle','right_ankle']
+  _slot_types = ['hubo_ros_msgs/HuboJointState[]','hubo_ros_msgs/HuboHand','hubo_ros_msgs/HuboHand','hubo_ros_msgs/HuboIMU','hubo_ros_msgs/HuboIMU','hubo_ros_msgs/HuboIMU','hubo_ros_msgs/HuboFT','hubo_ros_msgs/HuboFT','hubo_ros_msgs/HuboFT','hubo_ros_msgs/HuboFT']
 
   def __init__(self, *args, **kwds):
     """
@@ -56,7 +65,7 @@ float64 Fz
     changes.  You cannot mix in-order arguments and keyword arguments.
 
     The available fields are:
-       joints,imu,left_foot,right_foot,left_wrist,right_wrist,left_ankle,right_ankle
+       joints,left_hand,right_hand,imu,left_foot,right_foot,left_wrist,right_wrist,left_ankle,right_ankle
 
     :param args: complete set of field values, in .msg order
     :param kwds: use keyword arguments corresponding to message field names
@@ -67,6 +76,10 @@ float64 Fz
       #message fields cannot be None, assign default values for those that are
       if self.joints is None:
         self.joints = []
+      if self.left_hand is None:
+        self.left_hand = hubo_ros_msgs.msg.HuboHand()
+      if self.right_hand is None:
+        self.right_hand = hubo_ros_msgs.msg.HuboHand()
       if self.imu is None:
         self.imu = hubo_ros_msgs.msg.HuboIMU()
       if self.left_foot is None:
@@ -83,6 +96,8 @@ float64 Fz
         self.right_ankle = hubo_ros_msgs.msg.HuboFT()
     else:
       self.joints = []
+      self.left_hand = hubo_ros_msgs.msg.HuboHand()
+      self.right_hand = hubo_ros_msgs.msg.HuboHand()
       self.imu = hubo_ros_msgs.msg.HuboIMU()
       self.left_foot = hubo_ros_msgs.msg.HuboIMU()
       self.right_foot = hubo_ros_msgs.msg.HuboIMU()
@@ -115,7 +130,7 @@ float64 Fz
         _x = val1
         buff.write(_struct_4d2i.pack(_x.position, _x.velocity, _x.current, _x.temperature, _x.active, _x.zeroed))
       _x = self
-      buff.write(_struct_30d.pack(_x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.imu.z_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.left_foot.z_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.right_foot.z_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz))
+      buff.write(_struct_37d.pack(_x.left_hand.thumb, _x.left_hand.index, _x.left_hand.middle, _x.left_hand.ring, _x.left_hand.pinky, _x.right_hand.thumb, _x.right_hand.index, _x.right_hand.middle, _x.right_hand.ring, _x.right_hand.pinky, _x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -127,6 +142,10 @@ float64 Fz
     try:
       if self.joints is None:
         self.joints = None
+      if self.left_hand is None:
+        self.left_hand = hubo_ros_msgs.msg.HuboHand()
+      if self.right_hand is None:
+        self.right_hand = hubo_ros_msgs.msg.HuboHand()
       if self.imu is None:
         self.imu = hubo_ros_msgs.msg.HuboIMU()
       if self.left_foot is None:
@@ -164,8 +183,8 @@ float64 Fz
         self.joints.append(val1)
       _x = self
       start = end
-      end += 240
-      (_x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.imu.z_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.left_foot.z_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.right_foot.z_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz,) = _struct_30d.unpack(str[start:end])
+      end += 296
+      (_x.left_hand.thumb, _x.left_hand.index, _x.left_hand.middle, _x.left_hand.ring, _x.left_hand.pinky, _x.right_hand.thumb, _x.right_hand.index, _x.right_hand.middle, _x.right_hand.ring, _x.right_hand.pinky, _x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz,) = _struct_37d.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
@@ -190,7 +209,7 @@ float64 Fz
         _x = val1
         buff.write(_struct_4d2i.pack(_x.position, _x.velocity, _x.current, _x.temperature, _x.active, _x.zeroed))
       _x = self
-      buff.write(_struct_30d.pack(_x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.imu.z_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.left_foot.z_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.right_foot.z_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz))
+      buff.write(_struct_37d.pack(_x.left_hand.thumb, _x.left_hand.index, _x.left_hand.middle, _x.left_hand.ring, _x.left_hand.pinky, _x.right_hand.thumb, _x.right_hand.index, _x.right_hand.middle, _x.right_hand.ring, _x.right_hand.pinky, _x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz))
     except struct.error as se: self._check_types(se)
     except TypeError as te: self._check_types(te)
 
@@ -203,6 +222,10 @@ float64 Fz
     try:
       if self.joints is None:
         self.joints = None
+      if self.left_hand is None:
+        self.left_hand = hubo_ros_msgs.msg.HuboHand()
+      if self.right_hand is None:
+        self.right_hand = hubo_ros_msgs.msg.HuboHand()
       if self.imu is None:
         self.imu = hubo_ros_msgs.msg.HuboIMU()
       if self.left_foot is None:
@@ -240,12 +263,12 @@ float64 Fz
         self.joints.append(val1)
       _x = self
       start = end
-      end += 240
-      (_x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.imu.z_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.left_foot.z_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.right_foot.z_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz,) = _struct_30d.unpack(str[start:end])
+      end += 296
+      (_x.left_hand.thumb, _x.left_hand.index, _x.left_hand.middle, _x.left_hand.ring, _x.left_hand.pinky, _x.right_hand.thumb, _x.right_hand.index, _x.right_hand.middle, _x.right_hand.ring, _x.right_hand.pinky, _x.imu.x_acceleration, _x.imu.y_acceleration, _x.imu.z_acceleration, _x.imu.x_rotation, _x.imu.y_rotation, _x.left_foot.x_acceleration, _x.left_foot.y_acceleration, _x.left_foot.z_acceleration, _x.left_foot.x_rotation, _x.left_foot.y_rotation, _x.right_foot.x_acceleration, _x.right_foot.y_acceleration, _x.right_foot.z_acceleration, _x.right_foot.x_rotation, _x.right_foot.y_rotation, _x.left_wrist.Mx, _x.left_wrist.My, _x.left_wrist.Fz, _x.right_wrist.Mx, _x.right_wrist.My, _x.right_wrist.Fz, _x.left_ankle.Mx, _x.left_ankle.My, _x.left_ankle.Fz, _x.right_ankle.Mx, _x.right_ankle.My, _x.right_ankle.Fz,) = _struct_37d.unpack(str[start:end])
       return self
     except struct.error as e:
       raise genpy.DeserializationError(e) #most likely buffer underfill
 
 _struct_I = genpy.struct_I
 _struct_4d2i = struct.Struct("<4d2i")
-_struct_30d = struct.Struct("<30d")
+_struct_37d = struct.Struct("<37d")

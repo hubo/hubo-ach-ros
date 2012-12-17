@@ -27,7 +27,8 @@ Copyright (c) 2012, Daniel M. Lofaro
 #include <stdbool.h>
 #include <inttypes.h>
 #include "std_msgs/String.h"
-#include "hubo_ros_msgs/HuboTrajectory.h"
+#include "hubo_ros_msgs/HuboCommand.h"
+#include "hubo_ros_msgs/HuboHandCommand.h"
 #include "hubo_ros_msgs/HuboJointCommand.h"
 #include "ach.h"
 #include "../../../hubo-ach/include/hubo.h"
@@ -37,7 +38,7 @@ Copyright (c) 2012, Daniel M. Lofaro
 ach_channel_t chan_hubo_ref_filter;
 
 //Semi-empty function - Dan, since you're the HUBO expert here, make sure that this actually does what we think it does.
-void hubo_cb(const hubo_ros_msgs::HuboTrajectory &msg)
+void hubo_cb(const hubo_ros_msgs::HuboCommand &msg)
 {
     //Send the commands from the HuboCommand message onto ACH to the robot
     //Make the necessary hubo struct for ACH

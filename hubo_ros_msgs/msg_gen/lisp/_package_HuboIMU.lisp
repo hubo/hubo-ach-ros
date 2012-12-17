@@ -9,6 +9,4 @@
           X_ROTATION
           Y_ROTATION-VAL
           Y_ROTATION
-          Z_ROTATION-VAL
-          Z_ROTATION
 ))
