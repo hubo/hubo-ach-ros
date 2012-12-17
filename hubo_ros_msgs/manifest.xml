@@ -1,16 +1,15 @@
 <package>
-  <description brief="ros_hubo_ach">
+  <description brief="hubo_ros_msgs">
 
-     ros_hubo_ach
+     hubo_ros_msgs
 
   </description>
   <author>Calder Phillips-Grafflin</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/ros_hubo_ach</url>
+  <url>http://ros.org/wiki/hubo_ros_msgs</url>
   <depend package="std_msgs"/>
-  <depend package="hubo_ros_msgs"/>
-  <depend package="roscpp"/>
+  <depend package="rospy"/>
 
 </package>
 

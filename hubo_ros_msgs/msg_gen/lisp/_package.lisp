@@ -1,0 +1,32 @@
+(cl:defpackage hubo_ros_msgs-msg
+  (:use )
+  (:export
+<<<<<<< HEAD
+   "<HUBOIMU>"
+   "HUBOIMU"
+   "<HUBOFT>"
+   "HUBOFT"
+   "<HUBOJOINTCOMMAND>"
+   "HUBOJOINTCOMMAND"
+   "<HUBOJOINTSTATE>"
+   "HUBOJOINTSTATE"
+   "<HUBOSTATE>"
+   "HUBOSTATE"
+   "<HUBOTRAJECTORY>"
+   "HUBOTRAJECTORY"
+=======
+   "<HUBOJOINTCOMMAND>"
+   "HUBOJOINTCOMMAND"
+   "<HUBOFT>"
+   "HUBOFT"
+   "<HUBOTRAJECTORY>"
+   "HUBOTRAJECTORY"
+   "<HUBOJOINTSTATE>"
+   "HUBOJOINTSTATE"
+   "<HUBOIMU>"
+   "HUBOIMU"
+   "<HUBOSTATE>"
+   "HUBOSTATE"
+>>>>>>> 29eae297f826d1ce243bfc2d289c4cb3ac119701
+  ))
+
