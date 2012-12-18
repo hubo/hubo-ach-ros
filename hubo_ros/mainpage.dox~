@@ -2,7 +2,7 @@
 \mainpage
 \htmlinclude manifest.html
 
-\b hubo_ros
+\b ros_realtime_hubo 
 
 <!-- 
 Provide an overview of your package.

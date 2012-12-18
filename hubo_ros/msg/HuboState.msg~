@@ -1,0 +1,10 @@
+HuboJointState[] joints
+HuboHand left_hand
+HuboHand right_hand
+HuboIMU imu
+HuboIMU left_foot
+HuboIMU right_foot
+HuboFT left_wrist
+HuboFT right_wrist
+HuboFT left_ankle
+HuboFT right_ankle
