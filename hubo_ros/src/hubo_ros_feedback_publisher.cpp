@@ -37,7 +37,7 @@ Copyright (c) 2012, Daniel M. Lofaro
 //Global variables
 ach_channel_t chan_hubo_state;    // hubo-ach-state
 int hubo_debug = 0;
-char *joint_names[] = {"HPY", "not in urdf", "HNR", "HNP", "LSP", "LSR", "LSY", "LEP", "LWY", "not in urdf", "LWP", "RSP", "RSR", "RSY", "REP", "RWY", "not in urdf", "RWP", "not in ach", "LHY", "LHR", "LHP", "LKP", "LAP", "LAR", "not in ach", "RHY", "RHR", "RHP", "RKP", "RAP", "RAR", "not in urdf", "not in urdf", "not in urdf", "not in urdf", "not in urdf", "not in urdf", "not in urdf", "not in urdf", "not in urdf", "not in urdf", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown"};
+char *joint_names[] = {"HPY", "not in urdf1", "HNR", "HNP", "LSP", "LSR", "LSY", "LEP", "LWY", "not in urdf2", "LWP", "RSP", "RSR", "RSY", "REP", "RWY", "not in urdf3", "RWP", "not in ach1", "LHY", "LHR", "LHP", "LKP", "LAP", "LAR", "not in ach1", "RHY", "RHR", "RHP", "RKP", "RAP", "RAR", "not in urdf4", "not in urdf5", "not in urdf6", "not in urdf7", "not in urdf8", "not in urdf9", "not in urdf10", "not in urdf11", "not in urdf12", "not in urdf13", "unknown1", "unknown2", "unknown3", "unknown4", "unknown5", "unknown6", "unknown7", "unknown8"};
 
 //Semi-empty function - Dan, since you're the HUBO expert here, make sure that this actually does what we think it does.
 bool ACHtoHuboState(struct hubo_state * robot_state, hubo_ros_msgs::HuboState * msg)
