@@ -32,11 +32,11 @@ Copyright (c) 2012, Daniel M. Lofaro
 #include "hubo_ros/HuboJointCommand.h"
 #include "ach.h"
 //WPI includes
-//#include "../../wpi_hubo/hubo-ach/include/hubo.h"
-//#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
+#include "../../wpi_hubo/hubo-ach/include/hubo.h"
+#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
 //Hubo includes
-#include "../../../hubo-ach/include/hubo.h"
-#include "../../../hubo-ach/include/hubo-ref-filter.h"
+//#include "../../../hubo-ach/include/hubo.h"
+//#include "../../../hubo-ach/include/hubo-ref-filter.h"
 
 //Global variables
 ach_channel_t chan_hubo_ref_filter;
@@ -78,7 +78,7 @@ void hubo_cb(const hubo_ros::HuboCommand &msg)
     memset( &H_ref_filter, 0, sizeof(H_ref_filter));
     size_t fs;
     //First, get the current state of the Hubo from ACH
-    int r = ach_get(&chan_hubo_ref_filter, &H_ref_filter, sizeof(H_ref_filter), &fs, NULL, ACH_O_WAIT);
+    int r = ach_get(&chan_hubo_ref_filter, &H_ref_filter, sizeof(H_ref_filter), &fs, NULL, ACH_O_LAST);
     if(ACH_OK != r)
     {
         if(hubo_debug)
@@ -106,7 +106,7 @@ void hubo_cb(const hubo_ros::HuboCommand &msg)
     //If there are any joint values not assigned in the message, don't change them in the struct!
     printf("Sending a new state on ACH\n");
     //Put the new message into the ACH channel
-    //ach_put(&chan_hubo_ref_filter, &H_ref_filter, sizeof(H_ref_filter));
+    ach_put(&chan_hubo_ref_filter, &H_ref_filter, sizeof(H_ref_filter));
 }
 
 

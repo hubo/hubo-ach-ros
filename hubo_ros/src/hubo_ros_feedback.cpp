@@ -33,15 +33,15 @@ Copyright (c) 2012, Daniel M. Lofaro
 #include "hubo_ros/HuboFT.h"
 #include "ach.h"
 //WPI includes
-//#include "../../wpi_hubo/hubo-ach/include/hubo.h"
-//#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
+#include "../../wpi_hubo/hubo-ach/include/hubo.h"
+#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
 //Hubo includes
-#include "../../../hubo-ach/include/hubo.h"
-#include "../../../hubo-ach/include/hubo-ref-filter.h"
+//#include "../../../hubo-ach/include/hubo.h"
+//#include "../../../hubo-ach/include/hubo-ref-filter.h"
 //Defines
 #define FT_LW 1
 #define FT_RW 2
-#define FT_LA 3
+#define FT_LA 0
 #define FT_RA 3
 #define LEFT_IMU 0
 #define RIGHT_IMU 1
@@ -56,7 +56,7 @@ char *joint_names[] = {"HPY", "not in urdf1", "HNR", "HNP", "LSP", "LSR", "LSY",
 bool ACHtoHuboState(struct hubo_state * robot_state, struct hubo_ref * robot_reference, hubo_ros::HuboState * msg)
 {
 
-    if (robot_state != NULL && msg != NULL)
+    if (robot_state != NULL && robot_reference != NULL && msg != NULL)
     {
         //Copy data from a hubo_state struct used in ACH to
         //the HuboState message used in ROS
@@ -71,7 +71,7 @@ bool ACHtoHuboState(struct hubo_state * robot_state, struct hubo_ref * robot_ref
                 msg->joints[i].velocity = robot_state->joint[i].vel;
                 msg->joints[i].current = robot_state->joint[i].cur;
                 msg->joints[i].temperature = robot_state->joint[i].tmp;
-                msg->joints[i].active = (int)robot_state->joint[i].pos;
+                msg->joints[i].active = (int)robot_state->joint[i].active;
                 msg->joints[i].zeroed = (int)robot_state->joint[i].zeroed;
                 //Copy the reference command data
                 msg->joints[i].commanded = robot_reference->ref[i];
@@ -83,23 +83,23 @@ bool ACHtoHuboState(struct hubo_state * robot_state, struct hubo_ref * robot_ref
         }
         //Now, copy the three IMUs
         //IMU "1" the main IMU
-        msg->imu.x_acceleration = robot_state->imu[0].a_x;
-        msg->imu.y_acceleration = robot_state->imu[0].a_y;
-        msg->imu.z_acceleration = robot_state->imu[0].a_z;
-        msg->imu.x_rotation = robot_state->imu[0].w_x;
-        msg->imu.y_rotation = robot_state->imu[0].w_y;
+        msg->imu.x_acceleration = robot_state->imu[BODY_IMU].a_x;
+        msg->imu.y_acceleration = robot_state->imu[BODY_IMU].a_y;
+        msg->imu.z_acceleration = robot_state->imu[BODY_IMU].a_z;
+        msg->imu.x_rotation = robot_state->imu[BODY_IMU].w_x;
+        msg->imu.y_rotation = robot_state->imu[BODY_IMU].w_y;
         //IMU "2" the left foot IMU
-        msg->left_foot.x_acceleration = robot_state->imu[1].a_x;
-        msg->left_foot.y_acceleration = robot_state->imu[1].a_y;
-        msg->left_foot.z_acceleration = robot_state->imu[1].a_z;
-        msg->left_foot.x_rotation = robot_state->imu[1].w_x;
-        msg->left_foot.y_rotation = robot_state->imu[1].w_y;
+        msg->left_foot.x_acceleration = robot_state->imu[LEFT_IMU].a_x;
+        msg->left_foot.y_acceleration = robot_state->imu[LEFT_IMU].a_y;
+        msg->left_foot.z_acceleration = robot_state->imu[LEFT_IMU].a_z;
+        msg->left_foot.x_rotation = robot_state->imu[LEFT_IMU].w_x;
+        msg->left_foot.y_rotation = robot_state->imu[LEFT_IMU].w_y;
         //IMU "3" the right foot IMU
-        msg->right_foot.x_acceleration = robot_state->imu[2].a_x;
-        msg->right_foot.y_acceleration = robot_state->imu[2].a_y;
-        msg->right_foot.z_acceleration = robot_state->imu[2].a_z;
-        msg->right_foot.x_rotation = robot_state->imu[2].w_x;
-        msg->right_foot.y_rotation = robot_state->imu[2].w_y;
+        msg->right_foot.x_acceleration = robot_state->imu[RIGHT_IMU].a_x;
+        msg->right_foot.y_acceleration = robot_state->imu[RIGHT_IMU].a_y;
+        msg->right_foot.z_acceleration = robot_state->imu[RIGHT_IMU].a_z;
+        msg->right_foot.x_rotation = robot_state->imu[RIGHT_IMU].w_x;
+        msg->right_foot.y_rotation = robot_state->imu[RIGHT_IMU].w_y;
         //Now, copy the four force-torque sensors
         //F-T "1" the left wrist
         msg->left_wrist.Mx = robot_state->ft[FT_LW].m_x;
@@ -110,13 +110,13 @@ bool ACHtoHuboState(struct hubo_state * robot_state, struct hubo_ref * robot_ref
         msg->right_wrist.My = robot_state->ft[FT_RW].m_y;
         msg->right_wrist.Fz = robot_state->ft[FT_RW].f_z;
         //F-T "3" the left ankle
-        msg->left_ankle.Mx = robot_state->ft[2].m_x;
-        msg->left_ankle.My = robot_state->ft[2].m_y;
-        msg->left_ankle.Fz = robot_state->ft[2].f_z;
+        msg->left_ankle.Mx = robot_state->ft[FT_LA].m_x;
+        msg->left_ankle.My = robot_state->ft[FT_LA].m_y;
+        msg->left_ankle.Fz = robot_state->ft[FT_LA].f_z;
         //F-T "4" the right ankle
-        msg->right_ankle.Mx = robot_state->ft[3].m_x;
-        msg->right_ankle.My = robot_state->ft[3].m_y;
-        msg->right_ankle.Fz = robot_state->ft[3].f_z;
+        msg->right_ankle.Mx = robot_state->ft[FT_RA].m_x;
+        msg->right_ankle.My = robot_state->ft[FT_RA].m_y;
+        msg->right_ankle.Fz = robot_state->ft[FT_RA].f_z;
         //
         return true;
     }
@@ -166,7 +166,6 @@ int main(int argc, char **argv)
         {
             assert(sizeof(H_state) == fs);
         }
-        /**
         //Get latest reference from HUBO-ACH
         r = ach_get(&chan_hubo_ref_filter, &H_ref_filter, sizeof(H_ref_filter), &fs, NULL, ACH_O_LAST);
         if(ACH_OK != r)
@@ -180,7 +179,6 @@ int main(int argc, char **argv)
         {
             assert(sizeof(H_ref_filter) == fs);
         }
-        */
         //Assemble new HuboState message
         hubo_ros::HuboState msg = hubo_ros::HuboState();
         msg.joints.resize(HUBO_JOINT_COUNT);
