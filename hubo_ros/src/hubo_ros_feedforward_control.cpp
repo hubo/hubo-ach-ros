@@ -32,11 +32,12 @@ Copyright (c) 2012, Daniel M. Lofaro
 #include "hubo_ros/HuboJointCommand.h"
 #include "ach.h"
 //WPI includes
-#include "../../wpi_hubo/hubo-ach/include/hubo.h"
-#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
+//#include "../../wpi_hubo/hubo-ach/include/hubo.h"
+//#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
 //Hubo includes
 //#include "../../../hubo-ach/include/hubo.h"
 //#include "../../../hubo-ach/include/hubo-ref-filter.h"
+#include <hubo.h>
 
 //Global variables
 ach_channel_t chan_hubo_ref_filter;
@@ -115,8 +116,8 @@ int main(int argc, char **argv)
 {
     printf("Initializing ROS-to-ACH bridge\n");
     //initialize ACH channel
-    int r = ach_open(&chan_hubo_ref_filter, HUBO_CHAN_REF_FILTER_NAME , NULL);
-    assert(ACH_OK == r);
+    int r = ach_open(&chan_hubo_ref_filter, HUBO_CHAN_REF_NAME , NULL);
+    assert(ACH_OK == r | ACH_STALE_FRAMES == r | ACH_MISSED_FRAME == r);
     printf("Hubo-ACH channel loaded\n");
     //initialize ROS node
     ros::init(argc, argv, "hubo_ros_feedforward");

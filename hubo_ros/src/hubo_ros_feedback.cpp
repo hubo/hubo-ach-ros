@@ -33,11 +33,12 @@ Copyright (c) 2012, Daniel M. Lofaro
 #include "hubo_ros/HuboFT.h"
 #include "ach.h"
 //WPI includes
-#include "../../wpi_hubo/hubo-ach/include/hubo.h"
-#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
+//#include "../../wpi_hubo/hubo-ach/include/hubo.h"
+//#include "../../wpi_hubo/hubo-ach/include/hubo-ref-filter.h"
 //Hubo includes
 //#include "../../../hubo-ach/include/hubo.h"
 //#include "../../../hubo-ach/include/hubo-ref-filter.h"
+#include <hubo.h>
 //Defines
 #define FT_LW 1
 #define FT_RW 2
@@ -133,10 +134,10 @@ int main(int argc, char **argv)
     printf("Initializing ACH-to-ROS bridge\n");
     //initialize HUBO-ACH feedback channel
     int r = ach_open(&chan_hubo_state, HUBO_CHAN_STATE_NAME , NULL);
-    assert(ACH_OK == r);
+    assert(ACH_OK == r | ACH_STALE_FRAMES == r | ACH_MISSED_FRAME == r);
     //initialize HUBO-ACH reference channel
-    r = ach_open(&chan_hubo_ref_filter, HUBO_CHAN_REF_FILTER_NAME , NULL);
-    assert(ACH_OK == r);
+    r = ach_open(&chan_hubo_ref_filter, HUBO_CHAN_REF_NAME , NULL);
+    assert(ACH_OK == r | ACH_STALE_FRAMES == r | ACH_MISSED_FRAME == r);
     //initialize HUBO-ACH message structs
     struct hubo_state H_state;
     memset(&H_state, 0, sizeof(H_state));
