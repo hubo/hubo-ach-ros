@@ -123,7 +123,7 @@ void com_cb(const hubo_ros::AchCommand &msg){
 	if (msg.commandName.compare("enableJoint") == 0){
 		int index = IndexLookup(msg.jointName);
 		if (index == -1){
-			prinf("Error! Unable to convert joint name [%s] to hubo joint index! Aborting...", msg.jointName.c_str());
+			printf("Error! Unable to convert joint name [%s] to hubo joint index! Aborting...", msg.jointName.c_str());
 			return;
 		}
 		printf("Mapped URDF joint name [%s] to hubo joint index [%d]\n", msg.jointName.c_str(), index);
@@ -135,7 +135,7 @@ void com_cb(const hubo_ros::AchCommand &msg){
 
 		int index = IndexLookup(msg.jointName);
 		if (index == -1){
-			prinf("Error! Unable to convert joint name [%s] to hubo joint index! Aborting...", msg.jointName.c_str());
+			printf("Error! Unable to convert joint name [%s] to hubo joint index! Aborting...", msg.jointName.c_str());
 			return;
 		}
 		printf("Mapped URDF joint name [%s] to hubo joint index [%d]\n", msg.jointName.c_str(), index);
