@@ -153,6 +153,22 @@ void com_cb(const hubo_ros::AchCommand &msg){
 		H_cmd.type = D_CTRL_ON_OFF_ALL;
 		H_cmd.param[0] = D_DISABLE;
 
+	} else if (msg.commandName.compare("homeJoint") == 0){
+
+		int index = IndexLookup(msg.jointName);
+		if (index == -1){
+			printf("Error! Unable to convert joint name [%s] to hubo joint index! Aborting...", msg.jointName.c_str());
+			return;
+		}
+		printf("Mapped URDF joint name [%s] to hubo joint index [%d]\n", msg.jointName.c_str(), index);
+
+		H_cmd.type = D_GOTO_HOME;
+		H_cmd.joint = index;
+
+	} else if (msg.commandName.compare("homeAll") == 0){
+
+		H_cmd.type = D_GOTO_HOME_ALL;
+
 	} else {
 		printf("Unable to identify Ach Command. Discarding message.\n");
 		return;
