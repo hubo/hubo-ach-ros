@@ -30,6 +30,7 @@ Copyright (c) 2012, Daniel M. Lofaro
 #include "hubo_ros/HuboCommand.h"
 #include "hubo_ros/HuboHandCommand.h"
 #include "hubo_ros/HuboJointCommand.h"
+#include "hubo_ros/AchCommand.h"
 #include "ach.h"
 //WPI includes
 //#include "../../wpi_hubo/hubo-ach/include/hubo.h"
@@ -41,6 +42,7 @@ Copyright (c) 2012, Daniel M. Lofaro
 
 //Global variables
 ach_channel_t chan_hubo_ref_filter;
+ach_channel_t chan_hubo_board_cmd;
 int hubo_debug = 0;
 char *urdf_joint_names[] = {"HPY", "not in urdf1", "HNR", "HNP", "LSP", "LSR", "LSY", "LEP", "LWY", "not in urdf2", "LWP", "RSP", "RSR", "RSY", "REP", "RWY", "not in urdf3", "RWP", "not in ach1", "LHY", "LHR", "LHP", "LKP", "LAP", "LAR", "not in ach1", "RHY", "RHR", "RHP", "RKP", "RAP", "RAR", "not in urdf4", "not in urdf5", "not in urdf6", "not in urdf7", "not in urdf8", "not in urdf9", "not in urdf10", "not in urdf11", "not in urdf12", "not in urdf13", "unknown1", "unknown2", "unknown3", "unknown4", "unknown5", "unknown6", "unknown7", "unknown8"};
 
@@ -110,6 +112,57 @@ void hubo_cb(const hubo_ros::HuboCommand &msg)
     ach_put(&chan_hubo_ref_filter, &H_ref_filter, sizeof(H_ref_filter));
 }
 
+void com_cb(const hubo_ros::AchCommand &msg){
+	printf("Received Ach Command Message!\n");
+
+	hubo_board_cmd_t H_cmd;
+	memset(&H_cmd, 0, sizeof(H_cmd));
+
+	int r = 0;
+
+	if (msg.commandName.compare("enableJoint") == 0){
+		int index = IndexLookup(msg.jointName);
+		if (index == -1){
+			prinf("Error! Unable to convert joint name [%s] to hubo joint index! Aborting...", msg.jointName.c_str());
+			return;
+		}
+		printf("Mapped URDF joint name [%s] to hubo joint index [%d]\n", msg.jointName.c_str(), index);
+		H_cmd.type = D_CTRL_ON_OFF;
+		H_cmd.joint = IndexLookup(msg.jointName);
+		H_cmd.param[0] = D_ENABLE;
+
+	} else if (msg.commandName.compare("disableJoint") == 0){
+
+		int index = IndexLookup(msg.jointName);
+		if (index == -1){
+			prinf("Error! Unable to convert joint name [%s] to hubo joint index! Aborting...", msg.jointName.c_str());
+			return;
+		}
+		printf("Mapped URDF joint name [%s] to hubo joint index [%d]\n", msg.jointName.c_str(), index);
+		H_cmd.type = D_CTRL_ON_OFF;
+		H_cmd.joint = IndexLookup(msg.jointName);
+		H_cmd.param[0] = D_DISABLE;
+
+	} else if (msg.commandName.compare("enableAll") == 0){
+
+		H_cmd.type = D_CTRL_ON_OFF_ALL;
+		H_cmd.param[0] = D_ENABLE;
+
+	} else if (msg.commandName.compare("disableAll") == 0){
+
+		H_cmd.type = D_CTRL_ON_OFF_ALL;
+		H_cmd.param[0] = D_DISABLE;
+
+	} else {
+		printf("Unable to identify Ach Command. Discarding message.\n");
+		return;
+	}
+
+	printf("Sending a new command out on ACH.");
+	r = ach_put(&chan_hubo_board_cmd, &H_cmd, sizeof(H_cmd));
+
+}
+
 
 //NEW MAIN LOOP
 int main(int argc, char **argv)
@@ -118,6 +171,8 @@ int main(int argc, char **argv)
     //initialize ACH channel
     int r = ach_open(&chan_hubo_ref_filter, HUBO_CHAN_REF_NAME , NULL);
     assert(ACH_OK == r);
+    r = ach_open(&chan_hubo_board_cmd, HUBO_CHAN_BOARD_CMD_NAME, NULL);
+    assert(ACH_OK == r);
     printf("Hubo-ACH channel loaded\n");
     //initialize ROS node
     ros::init(argc, argv, "hubo_ros_feedforward");
@@ -125,6 +180,8 @@ int main(int argc, char **argv)
     printf("Node up\n");
     //construct ROS RT Subscriber
     ros::Subscriber hubo_command_sub = nh.subscribe("Hubo/HuboCommand", 1, hubo_cb);
+    printf("Subscriber up\n");
+    ros::Subscriber ach_command_sub = nh.subscribe("Hubo/AchCommand", 1, com_cb);
     printf("Subscriber up\n");
     //spin
     ros::spin();
